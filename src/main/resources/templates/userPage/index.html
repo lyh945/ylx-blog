@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>首页</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="/static/user-res/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom fonts for this template -->
+  <link href="/static/user-res/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+  <!-- Custom styles for this template -->
+  <link href="/static/user-res/css/clean-blog.min.css" rel="stylesheet">
+
+  <!--引入jQuery-->
+  <script src="https://cdn.staticfile.org/jquery/1.9.1/jquery.js"></script>
+
+</head>
+
+<body>
+
+<!-- Navigation -->
+<nav th:replace="/commons/common-user::bar"></nav>
+
+
+<!-- Page Header -->
+<header class="masthead" style="background-image: url('/static/admin-res/img/articlePicture/5.jpg');" th:fragment="header">
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        <div class="site-heading">
+          <h1>苍狗</h1>
+          <span class="subheading" >恋着黄昏</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Main Content -->
+<div class="container">
+  <div>
+    <a id="hotArticleBtn" href="javascript:void(0)" class="btn btn-default border-left">最热</a>
+    <a id="newArticleBtn" href="javascript:void(0)" class="btn btn-default border-left">最新</a>
+  </div>
+  <div id="hotNewList">
+    <div class="row" th:each="articleInfo:${articleInfos}" th:fragment="hotNewList">
+      <div class="col-lg-4 col-md-5 mx-auto" style="display: inline-block" >
+        <div class="post-preview" >
+          <a th:href="@{/init/article(id=${articleInfo.getId()})}" >
+            <h2 class="post-title" th:text="${articleInfo.getTitle()}">
+            </h2>
+            <h3 class="post-subtitle" th:text="${articleInfo.getSummary()}">
+            </h3>
+          </a>
+          <p class="post-meta" th:text="${#dates.format(articleInfo.getModifiedBy(),'yyyy-MM-dd HH:mm:ss')}">Posted by
+            <a href="#"></a>
+          </p>
+          <hr>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-5 mx-auto" style="display: inline-block">
+        <img style="width: 90%;height: 80%" th:src="@{/static/admin-res/img/articlePicture/}+${articleInfo.getPictureUrl()}">
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Pager -->
+  <div class="clearfix">
+    <a class="btn btn-primary float-right" href="/init/articleList">博文列表 &rarr;</a>
+  </div>
+
+</div><hr>
+
+<!-- Footer -->
+<footer th:fragment="footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        <!--<ul class="list-inline text-center">
+          <li class="list-inline-item">
+            <a onclick="dwuShare('qq')" href="javascript:void(0)" >
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fab fa-qq fa-stack-1x fa-inverse"></i>
+                </span>
+            </a>
+          </li>
+          <li class="list-inline-item">
+            <div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button" data-size="small">
+              <a onclick="dwuShare('weixin')" href="javascript:void(0)">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fab fa-weixin fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </div>
+          </li>
+          <li class="list-inline-item">
+            <a onclick="dwuShare('weibo')" href="javascript:void(0)">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fab fa-weibo fa-stack-1x fa-inverse"></i>
+                </span>
+            </a>
+          </li>
+        </ul>-->
+        <p class="copyright text-muted">Copyright &copy; Your Website 2020</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function dwuShare(siteCode){
+    let share = {}, openUrl = '';
+    share.link = window.location.href;
+    share.title = document.title;
+    switch(siteCode){
+      case 'weixin':
+        //微信分享
+        $('body').append('');
+        new QRCode('dwuShareWeixinQrcode', {
+          text: share.link,
+          width: 220,
+          height: 220,
+          colorDark : '#000000',
+          colorLight : '#ffffff',
+          correctLevel : QRCode.CorrectLevel.H
+        });
+        break;
+      case 'qq':
+        //QQ好友分享
+        openUrl = 'http://connect.qq.com/widget/shareqq/index.html?url=' + share.link + '&title=' + share.title;
+        break;
+      case 'weibo':
+        //新浪微博分享
+        openUrl = 'http://service.weibo.com/share/share.php?url=' + share.link + '&title=' + share.title;
+        break;
+      default:
+        break;
+    }
+    if(openUrl){
+      window.open(openUrl);
+    }
+    return false;
+  }
+</script>
+
+<!--jquery代码-->
+<script>
+  $(function(){
+    $("#hotArticleBtn").click(function(){
+      $("#hotNewList").load("/init/hotArticle")
+    });
+    $("#newArticleBtn").click(function(){
+      $("#hotNewList").load("/init/newArticle")
+    });
+  })
+</script>
+
+
+
+
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/zh_CN/sdk.js#xfbml=1&version=v9.0" nonce="llsryQCw"></script>
+
+<!-- Bootstrap core JavaScript -->
+<script src="/static/user-res/jquery/jquery.min.js"></script>
+<script src="/static/user-res/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Custom scripts for this template -->
+<script src="/static/user-res/js/clean-blog.min.js"></script>
+
+<script src="/static/user-res/js/qrcode.min.js"></script>
+
+</body>
+
+</html>

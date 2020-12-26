@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ylx.blog.mapper.ArticleCommentMapper">
+  <resultMap id="BaseResultMap" type="com.ylx.blog.pojo.ArticleComment">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="article_id" jdbcType="BIGINT" property="articleId" />
+    <result column="comment_id" jdbcType="BIGINT" property="commentId" />
+    <result column="create_by" jdbcType="TIMESTAMP" property="createBy" />
+    <result column="is_effective" jdbcType="BIT" property="isEffective" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, article_id, comment_id, create_by, is_effective
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_article_comment
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tbl_article_comment
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.ylx.blog.pojo.ArticleComment">
+    insert into tbl_article_comment (id, article_id, comment_id, 
+      create_by, is_effective)
+    values (#{id,jdbcType=BIGINT}, #{articleId,jdbcType=BIGINT}, #{commentId,jdbcType=BIGINT}, 
+      #{createBy,jdbcType=TIMESTAMP}, #{isEffective,jdbcType=BIT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ylx.blog.pojo.ArticleComment">
+    insert into tbl_article_comment
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="articleId != null">
+        article_id,
+      </if>
+      <if test="commentId != null">
+        comment_id,
+      </if>
+      <if test="createBy != null">
+        create_by,
+      </if>
+      <if test="isEffective != null">
+        is_effective,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="articleId != null">
+        #{articleId,jdbcType=BIGINT},
+      </if>
+      <if test="commentId != null">
+        #{commentId,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isEffective != null">
+        #{isEffective,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ylx.blog.pojo.ArticleComment">
+    update tbl_article_comment
+    <set>
+      <if test="articleId != null">
+        article_id = #{articleId,jdbcType=BIGINT},
+      </if>
+      <if test="commentId != null">
+        comment_id = #{commentId,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null">
+        create_by = #{createBy,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isEffective != null">
+        is_effective = #{isEffective,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ylx.blog.pojo.ArticleComment">
+    update tbl_article_comment
+    set article_id = #{articleId,jdbcType=BIGINT},
+      comment_id = #{commentId,jdbcType=BIGINT},
+      create_by = #{createBy,jdbcType=TIMESTAMP},
+      is_effective = #{isEffective,jdbcType=BIT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

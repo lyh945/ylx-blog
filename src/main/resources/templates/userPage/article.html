@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title th:text="${completeArticle.getTitle()}">Clean Blog - Start Bootstrap Theme</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="/static/user-res/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom fonts for this template -->
+  <link href="/static/user-res/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+  <!-- Custom styles for this template -->
+  <link href="/static/user-res/css/clean-blog.min.css" rel="stylesheet">
+
+  <!--引入jQuery-->
+  <script src="https://cdn.staticfile.org/jquery/1.9.1/jquery.js"></script>
+
+  <!--qrcode-->
+  <script src="https://cdn.bootcss.com/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+
+</head>
+
+<body onload="wxShow()">
+
+  <!-- Navigation -->
+  <nav th:replace="/commons/common-user::bar"></nav>
+
+  <!-- Page Header -->
+  <header class="masthead" th:style="'background-image: url('+'/static/admin-res/img/articlePicture/'+${completeArticle.getPictureUrl()}+');'">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="site-heading">
+            <h1 th:text="${completeArticle.getTitle()}"></h1>
+            <span class="subheading" th:text="${completeArticle.getSummary()}"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-10 col-md-12 mx-auto" >
+          <div id="editorContent" class="noticeDetailBody simditor-body hide" th:text="${completeArticle.getContent()}"></div>
+<!--          <pre style="white-space: pre-wrap;word-wrap: break-word;" class="col-auto" th:text="${completeArticle.getContent()}">-->
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- Pager -->
+  <div class="clearfix">
+    <a class="btn btn-primary float-right" style="margin-right: 100px;" href="/">返回首页</a>
+  </div>
+  <hr>
+
+  <!-- Footer -->
+  <footer th:fragment="footer">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            <li class="list-inline-item">
+              <a onclick="dwuShare('qq')" href="javascript:void(0)" >
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fab fa-qq fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+            <li class="list-inline-item">
+              <div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button" data-size="small">
+                <a  href="javascript:void(0)" data-toggle="modal" data-target="#weChatQRCodeModal">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fab fa-weixin fa-stack-1x fa-inverse"></i>
+                </span>
+                </a>
+              </div>
+            </li>
+            <li class="list-inline-item">
+              <a onclick="dwuShare('weibo')" href="javascript:void(0)">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fab fa-weibo fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+          </ul>
+          <p class="copyright text-muted">Copyright &copy; Your Website 2020</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 打开微信弹框-->
+  <div class="modal fade" id="weChatQRCodeModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+       aria-hidden="true">
+    <div class="modal-dialog" role="document" style="width: 240px;height: 200px">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteModalLabel">扫码分享</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body text-center">
+          <div class="wx-qrcode-wrapper">
+            <!-- 遮罩层 -->
+            <div class="wx-qrcode">
+              <!-- 生成的二维码容器 -->
+              <div id="qrcode"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--去除HTML标签-->
+  <script>
+    let editor = $("#editorContent")[0];
+    $(editor).removeClass("hide").html(editor.textContent)
+  </script>
+
+  <!--生成分享到微信的二维码-->
+  <script>
+    /* 生成二维码 */
+    $("#qrcode").qrcode({
+      text: window.location.href, //设置二维码内容
+      render: "canvas", //设置渲染方式
+      width: 200, //设置宽度,默认生成的二维码大小是 256×256
+      height: 200, //设置高度
+      typeNumber: -1, //计算模式
+      background: "#ffffff", //背景颜色
+      foreground: "#000000" //前景颜色
+    });
+
+    /* 点微信图标，触发二维码弹出层显示 */
+    function wxShow() {
+      $('.wx-qrcode-wrapper').show()
+    }
+
+    /* 关闭二维码弹出层 */
+    function wxHide() {
+      $('.wx-qrcode-wrapper').hide()
+    }
+
+  </script>
+
+  <!--分享文章到QQ、微博-->
+  <script>
+    function dwuShare(siteCode){
+      let share = {}, openUrl = '';
+      share.link = window.location.href;
+      share.title = document.title;
+      switch(siteCode){
+        case 'qq':
+          //QQ好友分享
+          openUrl = 'http://connect.qq.com/widget/shareqq/index.html?url=' + share.link + '&title=' + share.title;
+          break;
+        case 'weibo':
+          //新浪微博分享
+          openUrl = 'http://service.weibo.com/share/share.php?url=' + share.link + '&title=' + share.title;
+          break;
+        default:
+          break;
+      }
+      if(openUrl){
+        window.open(openUrl);
+      }
+      return false;
+    }
+  </script>
+
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="/static/user-res/jquery/jquery.min.js"></script>
+  <script src="/static/user-res/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Custom scripts for this template -->
+  <script src="/static/user-res/js/clean-blog.min.js"></script>
+
+
+</body>
+
+</html>

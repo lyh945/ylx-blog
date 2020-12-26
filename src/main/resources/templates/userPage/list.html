@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>博客列表</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/static/user-res/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom fonts for this template -->
+    <link href="/static/user-res/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="/static/user-res/css/clean-blog.min.css" rel="stylesheet">
+
+    <!--引入jQuery-->
+    <script src="https://cdn.staticfile.org/jquery/1.9.1/jquery.js"></script>
+
+</head>
+
+<body >
+
+<!-- Navigation -->
+<nav th:replace="/commons/common-user::bar"></nav>
+
+<!-- Page Header -->
+<header class="masthead" style="height: 10%;background-image:url('/static/admin-res/img/articlePicture/3.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="site-heading">
+                    <h1>博文列表</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content -->
+<div class="container">
+    <div class="row" th:fragment="hotNewList">
+        <div class="col-lg-2 col-md-4 mx-auto">
+            <h4 style="display: inline">文章分类</h4><p style="display: inline;margin-left: 10px" id="categoryName" th:fragment="categoryName" th:text="${categoryName}"></p>
+            <ul class="list-group">
+                <li onclick="articleNumByCategory(this)" value="0" class="list-group-item d-flex justify-content-between align-items-center">
+                    <a  href="javascript:void(0)">全部</a>
+                    <span class="badge badge-primary badge-pill" th:text="${articleTotal}"></span>
+                </li>
+                <li onclick="articleNumByCategory(this)" th:value="${numOfArticlesCategorie.getId()}" class="list-group-item d-flex justify-content-between align-items-center"
+                    th:each="numOfArticlesCategorie:${numOfArticlesCategories}" th>
+                    <a href="javascript:void(0)" th:text="${numOfArticlesCategorie.getName()}" th:value="${numOfArticlesCategorie.getId()}"></a>
+                    <span class="badge badge-primary badge-pill" th:text="${numOfArticlesCategorie.getArticleNum()}"></span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <a onclick="articleNumByCategory(this)" value="-1" href="javascript:void(0)">...更多</a>
+                    <span class="badge badge-primary badge-pill" th:text="${articleRemaining}"></span>
+                </li>
+            </ul>
+        </div>
+        <div class="col-lg-8 col-md-10 mx-auto" >
+            <div id="articleListByCategory" th:fragment="articleListByCategory">
+                <input type="hidden" id="isLast" th:value="${isLast}"/>
+                <input type="hidden" id="isFirst" th:value="${isFirst}"/>
+                <div class="clearfix">
+                    <span  class="float-right border-left" >
+                        <label>total pages:</label>
+                        <span id="totalValue" th:text="${totalPageNum}"></span>
+                    </span>
+                    <span style="margin-right: 20px" class="float-right border-right" >
+                        <label>current pages:</label>
+                        <span id="currValue" th:text="${currPageNum}"></span>
+                    </span>
+                </div>
+                <div th:each="completeArticle:${completeArticles}">
+                    <div class="post-preview" style="background-image: linear-gradient(to left , #95999c,white);">
+                        <a style="display: inline-block" th:href="@{/init/article(id=${completeArticle.getId()})}" >
+                            <h5 class="post-title" th:text="${completeArticle.getTitle()}">
+                            </h5>
+                            <h6 class="post-subtitle" th:text="${completeArticle.getSummary()}">
+                            </h6>
+                        </a>
+                        <p style="display: inline-block" class="post-meta" th:text="${#dates.format(completeArticle.getModifiedBy(),'yyyy-MM-dd HH:mm:ss')}"></p>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pager -->
+    <div class="clearfix">
+        <a id="nextPage" class="btn btn-primary float-right" >下一页</a>
+        <a id="previousPage"  class="btn btn-primary float-right" >上一页</a>
+    </div>
+
+
+
+</div><hr>
+
+<!-- Footer -->
+<footer th:replace="commons/common-user::footer"></footer>
+
+
+<!--jquery代码-->
+<script>
+    window.categoryId=0;
+    function articleNumByCategory(li){
+        let id=li.getAttribute("value");
+        categoryId=id;
+        $("#articleListByCategory").load("/list/pageQuery?categoryId="+categoryId);
+        $("#categoryName").load("/list/getCategoryName?id="+id);
+    }
+    $(function(){
+        $("#nextPage").click(function(){
+            let currValue=parseInt($("#currValue").html())+1;
+            $("#articleListByCategory").load("/list/pageQuery?categoryId="+categoryId+"&pageNum="+currValue);
+
+        })
+        $("#previousPage").click(function(){
+            let currValue=parseInt($("#currValue").html())-1;
+            $("#articleListByCategory").load("/list/pageQuery?categoryId="+categoryId+"&pageNum="+currValue);
+
+        })
+
+
+    });
+
+
+</script>
+
+<!-- Bootstrap core JavaScript -->
+<script src="/static/user-res/jquery/jquery.min.js"></script>
+<script src="/static/user-res/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Custom scripts for this template -->
+<script src="/static/user-res/js/clean-blog.min.js"></script>
+
+</body>
+
+</html>

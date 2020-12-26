@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ylx.blog.mapper.ArticleCategoryMapper">
+  <resultMap id="BaseResultMap" type="com.ylx.blog.pojo.ArticleCategory">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="category_id" jdbcType="BIGINT" property="categoryId" />
+    <result column="article_id" jdbcType="BIGINT" property="articleId" />
+    <result column="create_by" jdbcType="TIMESTAMP" property="createBy" />
+    <result column="modified_by" jdbcType="TIMESTAMP" property="modifiedBy" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, category_id, article_id, create_by, modified_by
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_article_category
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tbl_article_category
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.ylx.blog.pojo.ArticleCategory">
+    insert into tbl_article_category (id, category_id, article_id, 
+      create_by, modified_by)
+    values (#{id,jdbcType=BIGINT}, #{categoryId,jdbcType=BIGINT}, #{articleId,jdbcType=BIGINT}, 
+      #{createBy,jdbcType=TIMESTAMP}, #{modifiedBy,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ylx.blog.pojo.ArticleCategory">
+    insert into tbl_article_category
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="categoryId != null">
+        category_id,
+      </if>
+      <if test="articleId != null">
+        article_id,
+      </if>
+      <if test="createBy != null">
+        create_by,
+      </if>
+      <if test="modifiedBy != null">
+        modified_by,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="categoryId != null">
+        #{categoryId,jdbcType=BIGINT},
+      </if>
+      <if test="articleId != null">
+        #{articleId,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifiedBy != null">
+        #{modifiedBy,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ylx.blog.pojo.ArticleCategory">
+    update tbl_article_category
+    <set>
+      <if test="categoryId != null">
+        category_id = #{categoryId,jdbcType=BIGINT},
+      </if>
+      <if test="articleId != null">
+        article_id = #{articleId,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null">
+        create_by = #{createBy,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifiedBy != null">
+        modified_by = #{modifiedBy,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ylx.blog.pojo.ArticleCategory">
+    update tbl_article_category
+    set category_id = #{categoryId,jdbcType=BIGINT},
+      article_id = #{articleId,jdbcType=BIGINT},
+      create_by = #{createBy,jdbcType=TIMESTAMP},
+      modified_by = #{modifiedBy,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <!--通过文章id获取分类id-->
+  <select id="queryCategoryIdByArticleId" resultType="java.lang.Long" parameterType="java.lang.Long">
+    select category_id from tbl_article_category where article_id=#{articleId}
+  </select>
+
+  <!--通过分类id获取对应文章数量-->
+  <select id="queryArticleNumByCategoryId" parameterType="java.lang.Long" resultType="int">
+    select count(*) from tbl_article_category where category_id=#{categoryId}
+  </select>
+
+  <!--通过文章id修改分类id-->
+  <update id="updateCategoryIdByArticleId" parameterType="java.lang.Long" >
+    update tbl_article_category set category_id=#{categoryId} where article_id=#{articleId}
+  </update>
+  <!--通过文章id删除本关联-->
+  <delete id="deleteRelationByArticleId" parameterType="java.lang.Long">
+    delete from tbl_article_category where article_id=#{articleId}
+  </delete>
+
+</mapper>

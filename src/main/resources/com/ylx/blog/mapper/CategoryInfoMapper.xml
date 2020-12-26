@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ylx.blog.mapper.CategoryInfoMapper">
+  <resultMap id="BaseResultMap" type="com.ylx.blog.pojo.CategoryInfo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="number" jdbcType="TINYINT" property="number" />
+    <result column="create_by" jdbcType="TIMESTAMP" property="createBy" />
+    <result column="modified_by" jdbcType="TIMESTAMP" property="modifiedBy" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, name, number, create_by, modified_by
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_category_info
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <!--通过id查找分类名称-->
+  <select id="queryCategoryNameById" resultType="string" parameterType="java.lang.Long">
+    select name from tbl_category_info where id=#{id}
+  </select>
+
+  <!--通过主键删除分类信息-->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tbl_category_info
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <!--添加一条分类-->
+  <insert id="addCategory" parameterType="string">
+    insert into tbl_category_info (name, number)
+    values (#{name,jdbcType=VARCHAR}, 0)
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.ylx.blog.pojo.CategoryInfo">
+    insert into tbl_category_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="number != null">
+        number,
+      </if>
+      <if test="createBy != null">
+        create_by,
+      </if>
+      <if test="modifiedBy != null">
+        modified_by,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="number != null">
+        #{number,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifiedBy != null">
+        #{modifiedBy,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+  <!--更新一条分类-->
+  <update id="updateByPrimaryKeySelective" parameterType="com.ylx.blog.pojo.CategoryInfo">
+    update tbl_category_info
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="number != null">
+        number = #{number,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        create_by = #{createBy,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifiedBy != null">
+        modified_by = #{modifiedBy,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.ylx.blog.pojo.CategoryInfo">
+    update tbl_category_info
+    set name = #{name,jdbcType=VARCHAR},
+      number = #{number,jdbcType=TINYINT},
+      create_by = #{createBy,jdbcType=TIMESTAMP},
+      modified_by = #{modifiedBy,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <!--查询所有分类信息-->
+  <select id="queryAllCategoryInfo" resultMap="BaseResultMap">
+    select * from tbl_category_info
+  </select>
+
+  <!--通过分类名称查找分类-->
+  <select id="queryCategoryInfoByName" parameterType="string" resultMap="BaseResultMap">
+    select * from tbl_category_info where name=#{name}
+  </select>
+
+
+  <!--修改分类的名称-->
+  <update id="updateCategoryName" >
+    update tbl_category_info set name=#{name} where id=#{categoryId}
+  </update>
+
+  <resultMap id="ArticleNumOnCategory" type="com.ylx.blog.dto.NumOfArticlesCategory">
+    <id column="id" property="id"/>
+    <result column="name" property="name"/>
+    <result column="articleNum" property="articleNum"/>
+  </resultMap>
+
+  <!--根据分类id查询该分类下文章的数量-->
+  <select id="queryArticleNumOnCategory" resultMap="ArticleNumOnCategory">
+    SELECT cin.id as id,cin.name as name,COUNT(aca.category_id) as articleNum
+    FROM tbl_category_info cin,tbl_article_category aca
+    WHERE cin.id=aca.category_id
+    GROUP BY cin.id
+  </select>
+</mapper>

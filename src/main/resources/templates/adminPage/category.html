@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>分类管理</title>
+
+    <!-- Custom fonts for this template -->
+    <link href="/static/admin-res/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+            href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+            rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/static/admin-res/css/sb-admin-2.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this page -->
+    <link href="/static/admin-res/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
+    <!--引入jQuery-->
+    <script src="https://cdn.staticfile.org/jquery/1.9.1/jquery.js"></script>
+
+</head>
+
+<body id="page-top">
+
+<!-- Page Wrapper -->
+<div id="wrapper">
+
+    <!-- 侧边栏 -->
+    <ul th:replace="/commons/common-admin::sidebar(clickedOne='category')"></ul>
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <!-- Main Content -->
+        <div id="content">
+
+            <!-- 头部导航栏 -->
+            <nav th:replace="/commons/common-admin::topbar"></nav>
+            <!-- End of Topbar -->
+
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <h1 class="h3 mb-4 text-gray-800">分类管理 Category of my blog</h1>
+
+                <!--分类管理表-->
+                <div class="card shadow mb-4" >
+                    <div class="card-header py-3">
+                        <h6 style="display:inline-block;" class="m-0 font-weight-bold text-primary">分类管理表</h6>
+                        <a role="button" data-toggle="modal" data-target="#addCategoryModal" style="display:inline-block; margin-left:20px; width:35px;height:35px" class="btn btn-default">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-plus" viewBox="4 3 16 16">
+                                <path fill-rule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"></path>
+                            </svg>
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered text-center" id="dataTable" width="100%" cellspacing="0" >
+                                <thead>
+                                <tr>
+                                    <th class="align-middle">ID</th>
+                                    <th class="align-middle">分类名称</th>
+                                    <th class="align-middle">文章数量</th>
+                                    <th class="align-middle">创建时间</th>
+                                    <th class="align-middle">修改时间</th>
+                                    <th class="align-middle">修改名称</th>
+                                    <th class="align-middle">删除</th>
+                                </tr>
+                                </thead>
+                                <tfoot>
+                                <tr>
+                                    <th class="align-middle">ID</th>
+                                    <th class="align-middle">分类名称</th>
+                                    <th class="align-middle">文章数量</th>
+                                    <th class="align-middle">创建时间</th>
+                                    <th class="align-middle">修改时间</th>
+                                    <th class="align-middle">修改名称</th>
+                                    <th class="align-middle">删除</th>
+                                </tr>
+                                </tfoot>
+                                <tbody>
+                                <tr th:each="categoryInfo:${categoryInfos}">
+                                    <td class="align-middle" th:text="${categoryInfo.getId()}"></td>
+                                    <td class="align-middle" th:text="${categoryInfo.getName()}"></td>
+                                    <td class="align-middle" th:text="${categoryInfo.getNumber()}"></td>
+                                    <td class="align-middle" th:text="${#dates.format(categoryInfo.getCreateBy(),'yyyy-MM-dd HH:mm:ss')}"></td>
+                                    <td class="align-middle" th:text="${#dates.format(categoryInfo.getModifiedBy(),'yyyy-MM-dd HH:mm:ss')}"></td>
+                                    <td class="align-middle">
+                                        <a role="button"  class="btn btn-warning btn-circle btn-sm" data-toggle="modal" data-target="#modifyCategoryModal" th:onclick="mdfCategory([[${categoryInfo.getId()}]],[[${categoryInfo.getName()}]])">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                        </a>
+                                    </td>
+                                    <td class="align-middle">
+                                        <a role="button"  class="btn btn-danger btn-circle btn-sm" data-toggle="modal" data-target="#deleteCategoryModal" th:onclick="'javascript:return delCategory('+${categoryInfo.getId()}+');'">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- 页脚 -->
+        <footer th:replace="/commons/common-admin::footer"></footer>
+        <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+</div>
+<!-- End of Page Wrapper -->
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<!-- 退出登录-->
+<div th:replace="/commons/common-admin::logout"></div>
+
+<!--增删改的jQuery代码-->
+<script>
+    //修改分类弹框
+    function mdfCategory(id,name){
+        $("#hiddenId").attr("value",id);
+        $("#modifyCategoryName").attr("placeholder",name)
+    }
+    //删除分类弹框
+    function delCategory(delId){
+        window.delId=delId
+        // $("#delCategory").attr("href","/adminCategory/deleteCategory?id="+delId)
+        // alert(sessionStorage.getItem("hasArticle"));
+    }
+    $(function(){
+        $("#delCategory").click(function(){
+            $.ajax({
+                url:"/adminCategory/getDelTip?id="+delId,
+                success:function(data){
+                    alert(data);
+                }
+            })
+        })
+    })
+    //异步刷新提示文字
+    //修改分类
+    function sendModifyCategory() {
+        let id=$('#hiddenId').val();
+        let name=$('#modifyCategoryName').val();
+         name=encodeURIComponent(name)
+        let url = "/adminCategory/modifyCategory?id="+id+"&name="+name;
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            success: function (data) {
+                $("#modifyTip").html(data);
+                if(data!=='输入的分类名称不能为空!' && data!=='输入的分类名称已经存在!'){
+                    window.location.reload();
+                }
+            }
+        })
+        return false;
+    }
+    //添加分类
+    function sendAddCategory() {
+        let name=$('#addCategoryName').val().trim();
+        let url = "/adminCategory/addCategory?name="+name;
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            success: function (data) {
+                $("#addTip").html(data);
+                if(data!=='输入的分类名称不能为空!' && data!=='输入的分类名称已经存在!'){
+                    window.location.reload();
+                }
+            }
+        })
+        return false;
+    }
+
+</script>
+
+<!-- 添加分类弹框-->
+<div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addModalLabel">确定添加?</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <form ><!--action="/adminCategory/modifyCategory"-->
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="addCategoryName" class="col-form-label">分类名称:</label>
+                        <input type="text" class="form-control" id="addCategoryName" name="name">
+                    </div>
+                    <span id="addTip" th:text="${addTip}"></span><br>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">取消</button>
+                    <button onclick="return sendAddCategory()" type="submit" class="btn btn-primary" href="">添加</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 修改分类弹框-->
+<div class="modal fade" id="modifyCategoryModal" tabindex="-1" role="dialog" aria-labelledby="modifyModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modifyModalLabel">确定修改?</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <form ><!--action="/adminCategory/modifyCategory"-->
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="modifyCategoryName" class="col-form-label">分类名称:</label>
+                        <input type="hidden" id="hiddenId" name="id">
+                        <input type="text" class="form-control" id="modifyCategoryName" name="name" placeholder="">
+                    </div>
+                    <span id="modifyTip" style="color: red"></span><br>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">取消</button>
+                    <button onclick="return sendModifyCategory()" type="submit" class="btn btn-primary" href="">修改</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 删除分类弹框-->
+<div class="modal fade" id="deleteCategoryModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">确定删除?</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">选择”删除“会将本条分类彻底删除</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">取消</button>
+                <a id="delCategory" class="btn btn-primary" href="">删除</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap core JavaScript-->
+<script src="/static/admin-res/vendor/jquery/jquery.min.js"></script>
+<script src="/static/admin-res/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="/static/admin-res/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+<!-- Custom scripts for all pages-->
+<script src="/static/admin-res/js/sb-admin-2.min.js"></script>
+
+<!-- Page level plugins -->
+<!--<script src="/static/admin-res/vendor/chart.js/Chart.min.js"></script>-->
+<script src="/static/admin-res/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="/static/admin-res/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+<!-- Page level custom scripts -->
+<!--<script src="/static/admin-res/js/demo/chart-area-demo.js"></script>-->
+<!--<script src="/static/admin-res/js/demo/chart-pie-demo.js"></script>-->
+<script src="/static/admin-res/js/demo/datatables-demo.js"></script>
+
+</body>
+
+</html>

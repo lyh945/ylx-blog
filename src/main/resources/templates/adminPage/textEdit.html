@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>留言管理</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="/static/admin-res/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+            href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+            rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="/static/admin-res/css/sb-admin-2.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this page -->
+    <link href="/static/admin-res/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
+    <!--引入Simditor-->
+    <link rel="stylesheet" type="text/css" href="/static/Simditor/css/simditor.css" />
+
+    <script type="text/javascript" src="/static/Simditor/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/Simditor/js/module.js"></script>
+    <script type="text/javascript" src="/static/Simditor/js/hotkeys.js"></script>
+    <script type="text/javascript" src="/static/Simditor/js/uploader.js"></script>
+    <script type="text/javascript" src="/static/Simditor/js/simditor.js"></script>
+
+    <!--引入jQuery-->
+<!--    <script src="https://cdn.staticfile.org/jquery/1.9.1/jquery.js"></script>-->
+
+</head>
+
+<body id="page-top" onload="focusTitle()">
+<script>
+    function focusTitle(){
+        setTimeout("$('#ArticleTitle').focus()",100);
+    }
+</script>
+
+<!-- Page Wrapper -->
+<div id="wrapper">
+
+    <!-- 侧边栏 -->
+    <ul th:replace="/commons/common-admin::sidebar(clickedOne='textEdit')"></ul>
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <!-- Main Content -->
+        <div id="content">
+
+            <!-- 头部导航栏 -->
+            <nav th:replace="/commons/common-admin::topbar"></nav>
+            <!-- End of Topbar -->
+
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+                <form action="/adminTextEdit/publishArticle" method="post">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <input type="hidden" id="articleHiddenId" name="id" value="">
+                            <div>
+                                <label for="ArticleTitle" class="col-form-label">文章标题:</label><br>
+                                <input type="text" style="width: 40%;display: inline" class="form-control" id="ArticleTitle" name="title" placeholder="">
+                                <span id="titleTip" style="color: red"></span>
+                            </div><br>
+                            <div>
+                                <label for="articleSummary">文章简介:</label>
+                                <textarea id="articleSummary" name="summary"  class="form-control" style="resize:none;width: 60%" rows="2"></textarea>
+                            </div>
+                            <div style="display: inline">
+                                <label class="col-form-label">置顶:</label>
+                                <label>
+                                    是 <input id="yesTop" type="radio" name="isTop" value="1" disabled>
+                                </label>
+                                <label>
+                                    否 <input id="noTop" type="radio" name="isTop" value="0" checked disabled>
+                                </label>
+                            </div>
+                            <div style="display: inline">
+                                <label for="categoryName" style="margin-left: 40px" class="col-form-label">分类名称:</label>
+                                <select style="width: auto;" class="custom-select custom-select-sm form-control form-control-sm" id="categoryName" name="name">
+                                    <!--                            <option selected hidden id="selectedName">Choose here</option>-->
+                                    <option th:each="categoryInfo:${categoryInfos}" th:text="${categoryInfo.getName()}" th:value="${categoryInfo.getName()}"></option>
+                                </select>
+                            </div><br><br>
+                            <div style="display: inline-block">
+                                <label >选择题图:</label>
+                                <input type="hidden" id="hiddenPictureUrl" name="pictureUrl" value="1.jpg">
+                                <input onclick="return false" type="image" id="defaultPicture" src="/static/admin-res/img/articlePicture/1.jpg" style="width:5%;height:5%" alt="default">
+                            </div>
+                            <div >
+                                <!--                        <img name="pictureUrl" id="articlePicture" src="" alt="" style="width:100%;"><br><br>-->
+                                <input onclick="return changePicture(this)" type="image" src="/static/admin-res/img/articlePicture/1.jpg" style="width:10%;height:10%" alt="1.jpg"/>
+                                <input onclick="return changePicture(this)" type="image" src="/static/admin-res/img/articlePicture/2.jpg" style="width:10%;height:10%" alt="2.jpg"/>
+                                <input onclick="return changePicture(this)" type="image" src="/static/admin-res/img/articlePicture/3.jpg" style="width:10%;height:10%" alt="3.jpg"/>
+                                <input onclick="return changePicture(this)" type="image" src="/static/admin-res/img/articlePicture/4.jpg" style="width:10%;height:10%" alt="4.jpg"/>
+                                <input onclick="return changePicture(this)" type="image" src="/static/admin-res/img/articlePicture/5.jpg" style="width:10%;height:10%" alt="5.jpg"/>
+                                <input onclick="return changePicture(this)" type="image" src="/static/admin-res/img/articlePicture/6.jpg" style="width:10%;height:10%" alt="6.jpg"/>
+                                <input onclick="return changePicture(this)" type="image" src="/static/admin-res/img/articlePicture/7.jpg" style="width:10%;height:10%" alt="7.jpg"/>
+                                <input onclick="return changePicture(this)" type="image" src="/static/admin-res/img/articlePicture/8.jpg" style="width:10%;height:10%" alt="8.jpg"/>
+                                <input onclick="return changePicture(this)" type="image" src="/static/admin-res/img/articlePicture/9.jpg" style="width:10%;height:10%" alt="9.jpg"/>
+                                <input onclick="return changePicture(this)" type="image" src="/static/admin-res/img/articlePicture/10.jpg" style="width:10%;height:10%" alt="10.jpg"/>
+                                <input onclick="return changePicture(this)" type="image" src="/static/admin-res/img/articlePicture/11.jpg" style="width:10%;height:10%" alt="11.jpg"/>
+                            </div><br>
+                            <label>文章内容:</label><br>
+                            <div>
+                                <textarea id="articleContent" name="content" placeholder="" autofocus></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input id="isAllow" type="hidden" value="false">
+                        <button onclick="return checkArticle()" type="submit" class="btn btn-primary" href="">发表</button>
+                    </div>
+                </form>
+            </div>
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- 页脚 -->
+        <footer th:replace="/commons/common-admin::footer"></footer>
+        <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+</div>
+<!-- End of Page Wrapper -->
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<!-- 退出登录-->
+<div th:replace="/commons/common-admin::logout"></div>
+
+
+<script>
+    //初始化加载文本编辑域
+    let editor = new Simditor({
+        textarea: $('#articleContent'),
+        upload:true,
+        toolbar: [
+            'title',        // 标题
+            'bold',         // 加粗文字
+            'italic',       // 斜体文字
+            'underline',    // 下划线
+            'strikethrough',// 删除线
+            '|',            // 控件分隔线
+            'fontScale',    // 字体大小
+            'color',        // 字体颜色
+            'ol',           // 有序列表
+            'ul',           // 无序列表
+            'blockquote',   // 引用
+            'code',         // 代码块
+            'table',        // 表格
+            'link',         // 链接
+            'image',        // 图片
+            'hr',           // 分割线
+            'indent',       // 向右缩进
+            'outdent',      // 向左缩进
+            'alignment'     // 水平对齐
+        ]
+        //optional options
+    });
+
+    //选择题图
+    function changePicture(img){
+        let src=img.getAttribute("src");
+        src=src.substr(src.lastIndexOf("/")).substr(1,src.length);
+        $("#hiddenPictureUrl").val(src);
+        $("#defaultPicture").attr("src","/static/admin-res/img/articlePicture/"+src);
+        return false;
+        // $("#articlePicture").attr("src",src);
+    }
+    //检查是否可以发表
+    function checkArticle(){
+        let isAllow=$("#isAllow").val();
+        if(isAllow===false || isAllow==="false"){
+            $("#ArticleTitle")[0].focus();
+            return false;
+        }
+    }
+    //检查标题规范
+    $(function(){
+        $("#ArticleTitle").blur(function(){
+            let articleTitle=$('#ArticleTitle').val().trim();
+            if(articleTitle===null || articleTitle===''){
+                $("#titleTip").html('标题不能为空!');
+                $("#isAllow").val(false);
+            }else if(articleTitle.length>15){
+                $("#titleTip").html('标题不能超出15个字!');
+                $("#isAllow").val(false);
+            }else{
+                $("#titleTip").html('');
+                $("#isAllow").val(true);
+            }
+        })
+    })
+</script>
+
+<!-- Bootstrap core JavaScript-->
+<script src="/static/admin-res/vendor/jquery/jquery.min.js"></script>
+<script src="/static/admin-res/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="/static/admin-res/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+<!-- Custom scripts for all pages-->
+<script src="/static/admin-res/js/sb-admin-2.min.js"></script>
+
+<!-- Page level plugins -->
+
+
+</body>
+
+</html>

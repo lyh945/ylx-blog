@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>博文管理</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="/static/admin-res/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+            href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+            rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="/static/admin-res/css/sb-admin-2.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this page -->
+    <link href="/static/admin-res/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
+    <!--引入jQuery-->
+    <script src="https://cdn.staticfile.org/jquery/1.9.1/jquery.js"></script>
+
+</head>
+
+<body id="page-top">
+
+<!-- Page Wrapper -->
+<div id="wrapper">
+
+    <!-- 侧边栏 -->
+    <ul th:replace="/commons/common-admin::sidebar(clickedOne='article')"></ul>
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <!-- Main Content -->
+        <div id="content">
+
+            <!-- 头部导航栏 -->
+            <nav th:replace="/commons/common-admin::topbar"></nav>
+            <!-- End of Topbar -->
+
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">博文管理 Article of my blog</h1>
+                    <a href="/admin/init/textEdit" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                            class="fas fa-file-alt text-white-50"></i>&nbsp;发表文章</a>
+                </div>
+
+                <!--博文管理表-->
+                <div class="card shadow mb-4" >
+                    <div class="card-header py-3">
+                        <h6 style="display:inline-block;" class="m-0 font-weight-bold text-primary">博文管理表</h6>
+                        <label style="margin-left: 40px" for="categorySelect">博文分类:</label>
+                        <select  id="categorySelect" style="width:auto" class="custom-select custom-select-sm form-control form-control-sm">
+                            <option selected value="0" id="selectedName">全部</option>
+                            <option th:each="categoryInfo:${categoryInfos}" th:text="${categoryInfo.getName()}" th:value="${categoryInfo.getId()}"></option>
+                        </select>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered text-center" id="dataTable" width="100%" cellspacing="0" th:fragment="dataTable">
+                                <thead>
+                                <tr>
+                                    <th class="align-middle">ID</th>
+                                    <th class="align-middle">标题</th>
+<!--                                    <th class="align-middle">是否置顶</th>-->
+                                    <th class="align-middle">访问量</th>
+                                    <th class="align-middle">题图</th>
+                                    <th class="align-middle" style="width: 75px;">创建时间</th>
+                                    <th class="align-middle" style="width: 75px;">修改时间</th>
+                                    <th class="align-middle">修改信息</th>
+                                    <th class="align-middle">修改内容</th>
+                                    <th class="align-middle">删除</th>
+                                </tr>
+                                </thead>
+                                <tfoot>
+                                <tr>
+                                    <th class="align-middle">ID</th>
+                                    <th class="align-middle">标题</th>
+<!--                                    <th class="align-middle">是否置顶</th>-->
+                                    <th class="align-middle">访问量</th>
+                                    <th class="align-middle">题图</th>
+                                    <th class="align-middle" style="width: 75px;">创建时间</th>
+                                    <th class="align-middle" style="width: 75px;">修改时间</th>
+                                    <th class="align-middle">修改信息</th>
+                                    <th class="align-middle">修改内容</th>
+                                    <th class="align-middle">删除</th>
+                                </tr>
+                                </tfoot>
+                                <tbody>
+                                <tr th:each="completeArticle:${completeArticles}">
+                                    <td class="align-middle" th:text="${completeArticle.getId()}"></td>
+                                    <td class="align-middle" th:text="${completeArticle.getTitle()}"></td>
+<!--                                    <td class="align-middle" th:text="${completeArticle.getTop()==true?'是':'否'}"></td>-->
+                                    <td class="align-middle" th:text="${completeArticle.getTraffic()}"></td>
+                                    <td class="align-middle"><a href="#" data-toggle="modal" data-target="#viewImage" th:onclick="viewPicture([[${completeArticle.getId()}]],[[${completeArticle.getPictureUrl()}]])">查看</a></td>
+                                    <td class="align-middle" th:text="${#dates.format(completeArticle.getCreateBy(),'yyyy-MM-dd HH:mm:ss')}"></td>
+                                    <td class="align-middle" th:text="${#dates.format(completeArticle.getModifiedBy(),'yyyy-MM-dd HH:mm:ss')}"></td>
+                                    <td class="align-middle">
+                                        <a role="button"  class="btn btn-warning btn-circle btn-sm" data-toggle="modal" data-target="#modifyCategoryModal"
+                                           th:onclick="mdfArticle([[${completeArticle}]])">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                        </a>
+                                    </td>
+                                    <td class="align-middle">
+                                        <a role="button"  class="btn btn-info btn-circle btn-sm" data-toggle="modal" data-target="#articleContentModal"
+                                           th:onclick="mdfArticleContent([[${completeArticle.getId()}]],[[${completeArticle.getContent()}]])">
+                                            <i class="fas fa-info-circle"></i>
+                                        </a>
+                                    </td>
+                                    <td class="align-middle">
+                                        <a role="button"  class="btn btn-danger btn-circle btn-sm" data-toggle="modal" data-target="#deleteArticleModal" th:onclick="delArticle([[${completeArticle.getId()}]])">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- 页脚 -->
+        <footer th:replace="/commons/common-admin::footer"></footer>
+        <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+</div>
+<!-- End of Page Wrapper -->
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<!-- 退出登录-->
+<div th:replace="/commons/common-admin::logout"></div>
+
+
+<!--jQuery代码-->
+<script>
+    //修改博文弹框
+    function mdfArticle(articleInfo){
+        //博文id
+        let id=Object.values(articleInfo)[0];
+        $("#articleHiddenId").val(id);
+        //博文标题
+        let title=Object.values(articleInfo)[1];
+        $("#modifyArticleTitle").val(title);
+        //博文简介
+        let summary=Object.values(articleInfo)[2];
+        $("#articleSummary").val(summary);
+        //博文是否置顶
+        let isTop=Object.values(articleInfo)[9];
+        if(isTop===true){
+            $("#yesTop").attr("checked",true);
+        }else{
+            $("#noTop").attr("checked",true);
+        }
+        //博文对应的分类名
+        let name=Object.values(articleInfo)[7];
+        $("#categoryName").val(name);
+        //博文内容
+        // let content=Object.values(articleInfo)[8];
+        // $("#articleContent").val(content);
+    }
+
+    //修改文章内容
+    function mdfArticleContent(articleId,content){
+        $("#contentHiddenArticleId").val(articleId);
+        $("#articleContent").val(content);
+    }
+
+    //删除博文弹框
+    function delArticle(id){
+        $("#delArticle").attr("href","/adminArticle/deleteArticle?id="+id)
+    }
+    //查看图片
+    function viewPicture(id,src){
+        $("#picHiddenId").val(id);
+        $("#articlePicture").attr("src","/static/admin-res/img/articlePicture/"+src);
+    }
+    //更换图片
+    function changePicture(img){
+        let src=img.getAttribute("src");
+        $("#articlePicture").attr("src",src);
+    }
+    //发送更换图片
+    function sendChange(){
+        let id=$("#picHiddenId").val();
+        let src=$("#articlePicture").attr("src");
+        src=src.substr(src.lastIndexOf("/")).substr(1,src.length);
+        $("#sendSrc").attr("href","/adminArticle/changePictureUrl?id="+id+"&pictureUrl="+src);
+    }
+    //异步刷新提示文字
+    //修改博文时判断标题是否为空，为空不能修改
+    function checkTitle(){
+        let articleTitle=$('#modifyArticleTitle').val().trim();
+        if(articleTitle===null || articleTitle===''){
+            $("#nullTip").html('标题不能为空!');
+            return false;
+        }else{
+            return true;
+        }
+    }
+    //选择分类显示文章
+    $("#categorySelect").change(function(){
+        let id=$(this).val();
+        $("#dataTable").load("/admin/init/articleTable?id="+id);
+    });
+
+
+</script>
+
+<!-- 修改博文弹框-->
+<div class="modal fade" id="modifyCategoryModal" tabindex="-1" role="dialog" aria-labelledby="modifyModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modifyModalLabel">确定修改?</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <form action="/adminArticle/modifyArticle" method="post">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input type="hidden" id="articleHiddenId" name="id" value="">
+                        <div>
+                            <label for="modifyArticleTitle" class="col-form-label">文章标题:</label>
+                            <input type="text" autofocus class="form-control" id="modifyArticleTitle" name="title" placeholder="">
+                        </div><br>
+                        <div>
+                            <label for="articleSummary">文章简介:</label>
+                            <textarea id="articleSummary" name="summary" class="form-control" style="resize:none;" rows="2"></textarea>
+                        </div>
+                        <div style="display: inline">
+                            <label class="col-form-label">置顶:</label>
+                            <label>
+                                是 <input id="yesTop" type="radio" name="isTop" value="1" disabled>
+                            </label>
+                            <label>
+                                否 <input id="noTop" type="radio" name="isTop" value="0">
+                            </label>
+                        </div>
+                        <div style="display: inline">
+                            <label for="categoryName" style="margin-left: 40px" class="col-form-label">分类名称:</label>
+                            <select style="width: auto;" class="custom-select custom-select-sm form-control form-control-sm" id="categoryName" name="name">
+                                <!--                            <option selected hidden id="selectedName">Choose here</option>-->
+                                <option th:each="categoryInfo:${categoryInfos}" th:text="${categoryInfo.getName()}"></option>
+                            </select>
+                        </div><br>
+                    </div>
+                    <span id="nullTip" style="color: red"></span><br>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">取消</button>
+                    <button onclick="return checkTitle()" type="submit" class="btn btn-primary" href="">修改</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 文章内容弹框 -->
+<div class="modal fade" id="articleContentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="/adminArticle/modifyArticleContent" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <input type="hidden" id="contentHiddenArticleId" name="articleId" value="">
+                        <label for="articleContent" class="col-form-label">文章内容:</label>
+                        <textarea name="content" style="resize: none" rows="10" id="articleContent" class="form-control"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">更改</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 删除博文弹框-->
+<div class="modal fade" id="deleteArticleModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">确定删除?</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">选择”删除“会将本条分类彻底删除</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">取消</button>
+                <a id="delArticle" class="btn btn-primary" href="">删除</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 查看图片弹框-->
+<div class="modal fade" id="viewImage" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="picHiddenId" name="id">
+                <img name="pictureUrl" id="articlePicture" src="" alt="" style="width:100%;"><br><br>
+                <input onclick="changePicture(this)" type="image" src="/static/admin-res/img/articlePicture/1.jpg" style="width:10%;height:10%" alt="1.jpg"/>
+                <input onclick="changePicture(this)" type="image" src="/static/admin-res/img/articlePicture/2.jpg" style="width:10%;height:10%" alt="2.jpg"/>
+                <input onclick="changePicture(this)" type="image" src="/static/admin-res/img/articlePicture/3.jpg" style="width:10%;height:10%" alt="3.jpg"/>
+                <input onclick="changePicture(this)" type="image" src="/static/admin-res/img/articlePicture/4.jpg" style="width:10%;height:10%" alt="4.jpg"/>
+                <input onclick="changePicture(this)" type="image" src="/static/admin-res/img/articlePicture/5.jpg" style="width:10%;height:10%" alt="5.jpg"/>
+                <input onclick="changePicture(this)" type="image" src="/static/admin-res/img/articlePicture/6.jpg" style="width:10%;height:10%" alt="6.jpg"/>
+                <input onclick="changePicture(this)" type="image" src="/static/admin-res/img/articlePicture/7.jpg" style="width:10%;height:10%" alt="7.jpg"/>
+                <input onclick="changePicture(this)" type="image" src="/static/admin-res/img/articlePicture/8.jpg" style="width:10%;height:10%" alt="8.jpg"/>
+                <input onclick="changePicture(this)" type="image" src="/static/admin-res/img/articlePicture/9.jpg" style="width:10%;height:10%" alt="9.jpg"/>
+                <input onclick="changePicture(this)" type="image" src="/static/admin-res/img/articlePicture/10.jpg" style="width:10%;height:10%" alt="10.jpg"/>
+                <input onclick="changePicture(this)" type="image" src="/static/admin-res/img/articlePicture/11.jpg" style="width:10%;height:10%" alt="11.jpg"/>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                <a id="sendSrc" onclick="return sendChange()" class="btn btn-primary" >更换</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Bootstrap core JavaScript-->
+<script src="/static/admin-res/vendor/jquery/jquery.min.js"></script>
+<script src="/static/admin-res/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="/static/admin-res/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+<!-- Custom scripts for all pages-->
+<script src="/static/admin-res/js/sb-admin-2.min.js"></script>
+
+<!-- Page level plugins -->
+<!--    <script src="/static/admin-res/vendor/chart.js/Chart.min.js"></script>-->
+<script src="/static/admin-res/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="/static/admin-res/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+<!-- Page level custom scripts -->
+<!--    <script src="/static/admin-res/js/demo/chart-area-demo.js"></script>-->
+<!--    <script src="/static/admin-res/js/demo/chart-pie-demo.js"></script>-->
+<!--    <script src="/static/admin-res/js/demo/chart-bar-demo.js"></script>-->
+<script src="/static/admin-res/js/demo/datatables-demo.js"></script>
+
+</body>
+
+</html>

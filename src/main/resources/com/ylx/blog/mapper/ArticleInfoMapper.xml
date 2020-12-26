@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ylx.blog.mapper.ArticleInfoMapper">
+  <!--文章基本信息-->
+  <resultMap id="BaseResultMap" type="com.ylx.blog.pojo.ArticleInfo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="summary" jdbcType="VARCHAR" property="summary" />
+    <result column="is_top" jdbcType="BIT" property="isTop" />
+    <result column="traffic" jdbcType="INTEGER" property="traffic" />
+    <result column="picture_url" jdbcType="VARCHAR" property="pictureUrl" />
+    <result column="create_by" jdbcType="TIMESTAMP" property="createBy" />
+    <result column="modified_by" jdbcType="TIMESTAMP" property="modifiedBy" />
+  </resultMap>
+  <!--文章全部关联信息-->
+  <resultMap id="CompleteResultMap" type="com.ylx.blog.dto.CompleteArticle">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="summary" jdbcType="VARCHAR" property="summary" />
+    <result column="is_top" jdbcType="BIT" property="isTop" />
+    <result column="traffic" jdbcType="INTEGER" property="traffic" />
+    <result column="picture_url" jdbcType="VARCHAR" property="pictureUrl" />
+    <result column="create_by" jdbcType="TIMESTAMP" property="createBy" />
+    <result column="modified_by" jdbcType="TIMESTAMP" property="modifiedBy" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, title, summary, is_top, traffic, picture_url, create_by, modified_by
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_article_info
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <!--通过主键删除一篇文章-->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tbl_article_info
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.ylx.blog.pojo.ArticleInfo">
+    insert into tbl_article_info (id, title, summary, 
+      is_top, traffic, picture_url, 
+      create_by, modified_by)
+    values (#{id,jdbcType=BIGINT}, #{title,jdbcType=VARCHAR}, #{summary,jdbcType=VARCHAR}, 
+      #{isTop,jdbcType=BIT}, #{traffic,jdbcType=INTEGER}, #{pictureUrl,jdbcType=VARCHAR}, 
+      #{createBy,jdbcType=TIMESTAMP}, #{modifiedBy,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.ylx.blog.pojo.ArticleInfo">
+    insert into tbl_article_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="summary != null">
+        summary,
+      </if>
+      <if test="isTop != null">
+        is_top,
+      </if>
+      <if test="traffic != null">
+        traffic,
+      </if>
+      <if test="pictureUrl != null">
+        picture_url,
+      </if>
+      <if test="createBy != null">
+        create_by,
+      </if>
+      <if test="modifiedBy != null">
+        modified_by,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="summary != null">
+        #{summary,jdbcType=VARCHAR},
+      </if>
+      <if test="isTop != null">
+        #{isTop,jdbcType=BIT},
+      </if>
+      <if test="traffic != null">
+        #{traffic,jdbcType=INTEGER},
+      </if>
+      <if test="pictureUrl != null">
+        #{pictureUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifiedBy != null">
+        #{modifiedBy,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ylx.blog.pojo.ArticleInfo">
+    update tbl_article_info
+    <set>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="summary != null">
+        summary = #{summary,jdbcType=VARCHAR},
+      </if>
+      <if test="isTop != null">
+        is_top = #{isTop,jdbcType=BIT},
+      </if>
+      <if test="traffic != null">
+        traffic = #{traffic,jdbcType=INTEGER},
+      </if>
+      <if test="pictureUrl != null">
+        picture_url = #{pictureUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="createBy != null">
+        create_by = #{createBy,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifiedBy != null">
+        modified_by = #{modifiedBy,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ylx.blog.pojo.ArticleInfo">
+    update tbl_article_info
+    set title = #{title,jdbcType=VARCHAR},
+      summary = #{summary,jdbcType=VARCHAR},
+      is_top = #{isTop,jdbcType=BIT},
+      traffic = #{traffic,jdbcType=INTEGER},
+      picture_url = #{pictureUrl,jdbcType=VARCHAR},
+      create_by = #{createBy,jdbcType=TIMESTAMP},
+      modified_by = #{modifiedBy,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <!--查询所有文章信息-->
+  <select id="queryAllArticleInfo" resultMap="BaseResultMap">
+    select * from tbl_article_info
+  </select>
+
+  <!--查询文章总数-->
+  <select id="queryArticleTotal" resultType="int">
+    select count(*) from tbl_article_info
+  </select>
+
+  <!--查询最热四篇文章信息-->
+  <select id="queryHotArticleInfo" resultMap="BaseResultMap">
+    select distinct * from tbl_article_info
+    ORDER BY traffic DESC
+	LIMIT 0,4
+  </select>
+
+  <!--查询最新四篇文章信息-->
+  <select id="queryNewArticleInfo" resultMap="BaseResultMap">
+    select distinct * from tbl_article_info
+    ORDER BY create_by DESC
+	LIMIT 0,4
+  </select>
+
+  <!--查询所有文章及其关联信息-->
+  <select id="queryCompleteArticleInfo" resultMap="CompleteResultMap">
+    select ain.id,ain.title,ain.summary,ain.is_top,ain.traffic,ain.picture_url,ain.create_by,ain.modified_by,cin.name,aco.content
+    from tbl_article_info ain
+    LEFT JOIN tbl_article_category aca
+    ON ain.id=aca.article_id
+    LEFT JOIN tbl_category_info cin
+    ON aca.category_id=cin.id
+    LEFT JOIN tbl_article_content aco
+    ON ain.id=aco.article_id
+    ORDER BY ain.id
+  </select>
+
+  <!--查询最热四篇文章及其关联信息-->
+  <select id="queryHotCompleteArticleInfo" resultMap="CompleteResultMap">
+    select ain.id,ain.title,ain.summary,ain.is_top,ain.traffic,ain.picture_url,ain.create_by,ain.modified_by,cin.name,aco.content
+    from tbl_article_info ain
+    LEFT JOIN tbl_article_category aca
+    ON ain.id=aca.article_id
+    LEFT JOIN tbl_category_info cin
+    ON aca.category_id=cin.id
+    LEFT JOIN tbl_article_content aco
+    ON ain.id=aco.article_id
+    ORDER BY ain.traffic DESC
+	LIMIT 0,4
+  </select>
+
+  <!--查询最新四篇文章及其关联信息-->
+  <select id="queryNewCompleteArticleInfo" resultMap="CompleteResultMap">
+    select ain.id,ain.title,ain.summary,ain.is_top,ain.traffic,ain.picture_url,ain.create_by,ain.modified_by,cin.name,aco.content
+    from tbl_article_info ain
+    LEFT JOIN tbl_article_category aca
+    ON ain.id=aca.article_id
+    LEFT JOIN tbl_category_info cin
+    ON aca.category_id=cin.id
+    LEFT JOIN tbl_article_content aco
+    ON ain.id=aco.article_id
+    ORDER BY ain.create_by DESC
+	LIMIT 0,4
+  </select>
+
+  <!--更新文章的标题、简介、是否置顶-->
+  <update id="updateArticleInfo" parameterType="com.ylx.blog.pojo.ArticleInfo">
+    update tbl_article_info
+    <set>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="summary != null">
+        summary = #{summary,jdbcType=VARCHAR},
+      </if>
+      <if test="isTop != null">
+        is_top = #{isTop,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <!--根据文章id更改题图Url-->
+  <update id="changePictureUrl" parameterType="com.ylx.blog.pojo.ArticleInfo">
+    update tbl_article_info set picture_url=#{pictureUrl} where id=#{id}
+  </update>
+</mapper>

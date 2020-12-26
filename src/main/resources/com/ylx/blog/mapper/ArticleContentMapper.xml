@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ylx.blog.mapper.ArticleContentMapper">
+  <resultMap id="BaseResultMap" type="com.ylx.blog.pojo.ArticleContent">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="article_id" jdbcType="BIGINT" property="articleId" />
+    <result column="create_by" jdbcType="TIMESTAMP" property="createBy" />
+    <result column="modifield_by" jdbcType="TIMESTAMP" property="modifieldBy" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.ylx.blog.pojo.ArticleContent">
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, article_id, create_by, modifield_by
+  </sql>
+  <sql id="Blob_Column_List">
+    content
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from tbl_article_content
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tbl_article_content
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.ylx.blog.pojo.ArticleContent">
+    insert into tbl_article_content (id, article_id, create_by, 
+      modifield_by, content)
+    values (#{id,jdbcType=BIGINT}, #{articleId,jdbcType=BIGINT}, #{createBy,jdbcType=TIMESTAMP}, 
+      #{modifieldBy,jdbcType=TIMESTAMP}, #{content,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ylx.blog.pojo.ArticleContent">
+    insert into tbl_article_content
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="articleId != null">
+        article_id,
+      </if>
+      <if test="createBy != null">
+        create_by,
+      </if>
+      <if test="modifieldBy != null">
+        modifield_by,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="articleId != null">
+        #{articleId,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifieldBy != null">
+        #{modifieldBy,jdbcType=TIMESTAMP},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ylx.blog.pojo.ArticleContent">
+    update tbl_article_content
+    <set>
+      <if test="articleId != null">
+        article_id = #{articleId,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null">
+        create_by = #{createBy,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifieldBy != null">
+        modifield_by = #{modifieldBy,jdbcType=TIMESTAMP},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.ylx.blog.pojo.ArticleContent">
+    update tbl_article_content
+    set article_id = #{articleId,jdbcType=BIGINT},
+      create_by = #{createBy,jdbcType=TIMESTAMP},
+      modifield_by = #{modifieldBy,jdbcType=TIMESTAMP},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ylx.blog.pojo.ArticleContent">
+    update tbl_article_content
+    set article_id = #{articleId,jdbcType=BIGINT},
+      create_by = #{createBy,jdbcType=TIMESTAMP},
+      modifield_by = #{modifieldBy,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <!--通过文章id修改文章内容-->
+  <update id="updateContentByArticleId" parameterType="com.ylx.blog.pojo.ArticleContent">
+    update tbl_article_content set content=#{content} where article_id=#{articleId}
+  </update>
+
+  <!--通过文章id删除文章内容-->
+  <delete id="deleteContentByArticleId" parameterType="java.lang.Long">
+    delete from tbl_article_content where article_id=#{articleId}
+  </delete>
+</mapper>
